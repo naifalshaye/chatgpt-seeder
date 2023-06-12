@@ -36,7 +36,7 @@
 
                     <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 md:w-3/5 w-full md:py-5">
                         <div class="space-y-1">
-                            <select class="w-full form-control form-input form-input-bordered" id="database_table"
+                            <select v-model="database_table" class="w-full form-control form-input form-input-bordered" id="database_table"
                                     @change="getColumns($event)">
                                 <option value="">Select a table</option>
                                 <option v-for="table in this.tables" :value="table.Tables_in_nova4"
@@ -63,9 +63,8 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col md:flex-row md:items-center border-b border-gray-100 dark:border-gray-700" id="available_columns" ref="columns"
-                     v-if="this.columns.length > 0">
-                    <div class="px-6 md:px-8 mt-1 md:mt-1 w-full md:w-1/5">
+                <div class="flex flex-col md:flex-row md:items-center border-b border-gray-100 dark:border-gray-700" id="available_columns" ref="columns">
+                    <div class="px-6 md:px-8 mt-1 md:mt-1 w-full md:w-1/5 py-6">
                         <label class="inline-block leading-tight space-x-1" for="table">
                             <span>Available Columns:</span>
                             <span class="text-red-500 text-sm">*</span>
@@ -73,7 +72,7 @@
                     </div>
 
                     <div class="mt-1 md:mt-0 pb-5 px-2 md:px-2 md:w-3/5 w-full md:py-5">
-                        <div class="space-y-1">
+                        <div class="space-y-1" v-if="this.columns.length > 0">
                             <div class="container mx-auto">
                                 <table class="table-auto md:w-1/3">
                                     <thead>
@@ -129,10 +128,10 @@
                                 </table>
                             </div>
                         </div>
+                        <div class="text-md pl-6" v-show="database_table !== 'Select a table' && database_table === '' && columns.length === 0">The selected table has no columns.</div>
                     </div>
                 </div>
 
-                <!--                <div v-show="!this.columns">No columns found in this table.</div>-->
             </div>
             <div
                 class="flex flex-col md:flex-row md:items-center justify-center md:justify space-y-2 md:space-y-0 space-x-3">
@@ -161,6 +160,8 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            data_type:'',
+            database_table:'',
             tables: [],
             columns: [],
             formSubmitted: false,
@@ -179,6 +180,7 @@ export default {
             if (table.target.value === '') {
                 this.columns = [];
             } else {
+                this.database_table = table.target.value;
                 Nova.request().get('/nova-vendor/chatgpt-seeder/columns/' + table.target.value, {}).then(({data}) => {
                     this.columns = data.columns
                 })
@@ -188,6 +190,9 @@ export default {
         cancel(){
             this.$refs.form.reset();
             this.columns = [];
+        },
+        submitForm(){
+
         }
     },
 }
