@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Naif\ChatgptSeeder\Http\Controllers\ChatGPTSeederController;
 
@@ -17,3 +16,4 @@ use Naif\ChatgptSeeder\Http\Controllers\ChatGPTSeederController;
 
 Route::get('/tables',ChatGPTSeederController::class.'@tables');
 Route::get('/columns/{name}',ChatGPTSeederController::class.'@getColumns');
+Route::post('/generate',ChatGPTSeederController::class.'@generate');

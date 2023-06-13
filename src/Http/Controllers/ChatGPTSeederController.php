@@ -5,6 +5,7 @@ namespace Naif\ChatgptSeeder\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class ChatGPTSeederController extends Controller
 {
@@ -39,6 +40,12 @@ class ChatGPTSeederController extends Controller
         return response()->json([
             'columns' => $columns_list
         ]);
+    }
+
+    public function generate(NovaRequest $request)
+    {
+        dd($request->all());
+        
     }
 
     public function getModelFromTable($table)
