@@ -16,4 +16,6 @@ use Naif\ChatgptSeeder\Http\Controllers\ChatGPTSeederController;
 
 Route::get('/tables',ChatGPTSeederController::class.'@tables');
 Route::get('/columns/{name}',ChatGPTSeederController::class.'@getColumns');
+Route::get('/get-generate-retry',ChatGPTSeederController::class.'@getRetry');
 Route::post('/generate',ChatGPTSeederController::class.'@generate');
+Route::post('/proceed',ChatGPTSeederController::class.'@proceed');

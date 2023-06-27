@@ -25,6 +25,16 @@ class ToolServiceProvider extends ServiceProvider
         Nova::serving(function (ServingNova $event) {
             //
         });
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../config/chatgpt-seeder.php' => config_path('chatgpt-seeder.php')
+            ], 'config');
+
+            $this->publishes([
+                __DIR__.'/../resources/assets/images' => public_path('vendor/chatgpt-seeder/images'),
+            ], 'public');
+        }
     }
 
     /**
