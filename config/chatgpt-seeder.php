@@ -12,6 +12,8 @@ return [
     */
 
     'chatgpt_api_key' => env('CHATGPT_SEEDER_API_KEY', ''),
+    'chatgpt_max_tokens' => env('CHATGPT_SEEDER_MAX_TOKENS', '1000'),
     'chatgpt_generate_retry' => env('CHATGPT_SEEDER_GENERATE_RETRY', '3'),
+
 
 ];

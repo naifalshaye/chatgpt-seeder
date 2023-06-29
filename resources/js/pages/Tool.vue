@@ -156,7 +156,7 @@
                 <img src="/vendor/chatgpt-seeder/images/loading-spinner.gif" alt="Loading" width="46"
                      class="flex justify-center bg-opacity-80 z-50"/>
             </div>
-            <div v-if="this.message" class="text-green-500 font-bold mt-4 flex justify-center">
+            <div v-if="this.message" class="text-green-500 font-bold mt-4 flex justify-center capitalize">
                 {{ this.message }}
             </div>
             <div v-if="this.error" class="text-red-500 font-bold mt-4 flex justify-center">
@@ -182,7 +182,7 @@
         <diver
             class="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-2xl w-full mx-4 overflow-y-auto border border-gray-200 dark:border-gray-600">
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-600">
-                <h2 class="text-md font-bold">Sample Data</h2>
+                <h2 class="text-md font-bold">Preview Data</h2>
                 <button @click="closeModal"
                         class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none">
                     <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -197,7 +197,7 @@
                         <thead>
                         <tr>
                             <th v-for="key in this.keys" :key="key"
-                                class="border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 px-4 py-2">
+                                class="border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 px-4 py-2 capitalize">
                                 {{ key }}
                             </th>
                         </tr>
@@ -220,6 +220,12 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="flex justify-center mb-4 mt-2">
+                    API Usage:<br>
+                    Completion Tokens: {{ this.usage.completion_tokens }}<br>
+                    Prompt Tokens: {{ this.usage.prompt_tokens }}<br>
+                    Total Tokens: {{ this.usage.total_tokens }}
+                </div>
                 <div class="flex justify-center mt-8">
                     <button class="px-4 py-2 bg-green-500 text-white rounded-md mr-2 rounded" @click="proceed">Proceed
                     </button>
@@ -238,9 +244,6 @@
 </template>
 
 <script>
-
-import axios from 'axios';
-
 export default {
     data() {
         return {
@@ -253,6 +256,7 @@ export default {
                 selected_columns: [],
                 seed_data: []
             },
+            usage: null,
             keys: [],
             sample_data: [],
             generate_retry: 3,
@@ -299,9 +303,10 @@ export default {
                 this.form.columns = this.columns;
                 Nova.request().post('/nova-vendor/chatgpt-seeder/generate', this.form)
                     .then(({data}) => {
+                        this.usage = data.usage;
                         if (data.data) {
                             this.content = data.data;
-                            data = data.data.slice(0, 5);
+                            data = data.data.slice(0, 8);
                             if (data.length > 1) {
                                 this.sample_data = data;
                                 this.keys = Object.keys(data[0]);
@@ -327,7 +332,7 @@ export default {
                 .then(({data}) => {
                     if (data.succeed) {
                         this.isLoading = false;
-                        this.message = 'Data inserted successfully!'
+                        this.message = this.form.database_table +' table seeded successfully!'
                     }
                 })
         },

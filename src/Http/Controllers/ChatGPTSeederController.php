@@ -63,22 +63,30 @@ class ChatGPTSeederController extends Controller
 
         $response = Http::withoutVerifying()
             ->withHeaders([
-                'Authorization' => 'Bearer ' . env('CHATGPT_API_KEY'),
+                'Authorization' => 'Bearer ' . Config::get('chatgpt-seeder.chatgpt_api_key'),
                 'Content-Type' => 'application/json',
             ])->post('https://api.openai.com/v1/engines/text-davinci-003/completions', [
-                "prompt" => 'You will be provided with data required to seed database table, you will be provided by table name, number of records needed and columns name. Data type: ' . $request->data_type . ' data and Data required: ' . $request->data_required . ' and Number of records: ' . $request->number_of_records . ' and columns name ' . $columns_list . ' use columns as key make it a valid json without new lines.',
-                "max_tokens" => 1000,
+//                "prompt" => 'You will be provided with data required to seed database table, you will be provided by table name, number of records needed and columns name. Data type: ' . $request->data_type . ' data and Data required description: ' . $request->data_required . ' and Number of records: ' . $request->number_of_records . ' and columns name ' . $columns_list . ' use columns as key make it a valid json without new lines.',
+                "prompt" => 'Please generate the necessary data for seeding the database table. Take into account the following details:
+                    Real or Fake data: '.$request->data_type.'
+                    Table Name: '.$request->database_table.'
+                    Number of Records: '.$request->number_of_records.'
+                    Columns: '.$columns_list.'
+                    Data required description: '.$request->data_required.'
+                Ensure that you format the data as valid JSON, using the column names as keys. Remove any new lines from the JSON structure to maintain its validity.',
+                "max_tokens" => (int)Config::get('chatgpt-seeder.chatgpt_max_tokens'),
             ]);
 
         $repsonse = explode('\n', $response->json()['choices'][0]['text']);
-        $total_tokens = $response->json()['usage']['total_tokens'];
+        $usage = $response->json()['usage'];
         $string = stripslashes(trim($repsonse[0]));
         $modifiedString = preg_replace('/(?<!\\\\)\s+/', ' ', $string);
         $modifiedString = '[' . $modifiedString . ']';
         $array = json_decode($modifiedString, true);
 
         return response()->json([
-            'data' => $array
+            'data' => $array[0],
+            'usage' => $usage,
         ]);
     }
 
