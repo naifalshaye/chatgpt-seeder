@@ -3,17 +3,21 @@
 A powerful tool that leverages the capabilities of ChatGPT to automate the generation of realistic and meaningful data for your database seeding need.
 
 ## Features
-- Database Seeding: Easily seed tables with real or fake data.
-- Data Type Selection: Choose between real data or fake data generation.
-- Table Selection: Select target tables for seeding.
-- Custom Record Count: Set the number of records to seed.
-- Column Selection: Choose specific columns for data insertion.
-- Nullable Column Handling: Automatic handling of non-nullable columns.
-- Data Description: Provide contextual information for accurate data generation.
-- Retry Generation: Control the number of retries for accurate data results.
-- API Integration: Seamlessly integrate with data generation APIs.
-- Configuration Flexibility: Customize API endpoint, key, and settings.
-- User-friendly Interface: Intuitive and smooth user experience.
+- Easy data seeding
+- Real/fake data options
+- Flexible table selection
+- Customizable record count
+- Detailed column info
+- Selective column insertion
+- Auto select none nullable columns
+- Contextual data description
+- Preview data before insertion
+- Data regeneration for accuracy
+- API rate limit handling using retry count
+- Seamless OpenAI API integration
+- Customizable configuration
+- Display API token usage
+- User-friendly interface
 
 ## Installation
 
@@ -37,9 +41,6 @@ CHATGPT_SEEDER_MAX_TOKENS=1000
 CHATGPT_SEEDER_GENERATE_RETRY=3
 ```
 
-
-
- 
 ## Usage
 
 Add the tool to NovaServiceProvider.php
