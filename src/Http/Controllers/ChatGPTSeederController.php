@@ -13,8 +13,16 @@ class ChatGPTSeederController extends Controller
 {
     public function tables()
     {
+        $tables_list = [];
+        $tables = Schema::getAllTables();
+
+        foreach ($tables as $table){
+            $table = json_decode(json_encode($table),true);
+            $table = array_values($table);
+            $tables_list[] = $table[0];
+        }
         return response()->json([
-            'tables' => Schema::getAllTables()
+            'tables' => $tables_list
         ]);
     }
 

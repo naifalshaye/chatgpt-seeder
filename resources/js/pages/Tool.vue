@@ -40,8 +40,8 @@
                                     id="database_table"
                                     @change="getColumns($event)" required>
                                 <option value="">Select Table</option>
-                                <option v-for="table in this.tables" :value="table.Tables_in_nova4"
-                                        :key="table.Tables_in_nova4">{{ table.Tables_in_nova4 }}
+                                <option v-for="table in this.tables" :value="table"
+                                        :key="table">{{ table }}
                                 </option>
                             </select>
                         </div>
