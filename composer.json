@@ -1,6 +1,6 @@
 {
     "name": "naif/chatgpt-seeder",
-    "description": "A Laravel Nova 5 powerful tool that leverages the capabilities of ChatGPT to automate the generation of realistic and meaningful data for your database seeding need.",
+    "description": "A Laravel Nova 4 powerful tool that leverages the capabilities of ChatGPT to automate the generation of realistic and meaningful data for your database seeding need.",
     "keywords": [
         "laravel",
         "nova",
