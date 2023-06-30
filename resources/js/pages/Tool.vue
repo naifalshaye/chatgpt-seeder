@@ -149,6 +149,10 @@
                                 </table>
                             </div>
                         </div>
+
+                        <div v-if="this.form.database_table !== '' && this.columns.length === 0" class="text-red-500 font-bold mt-4 flex justify-center text-center">
+                            This table has no columns.
+                        </div>
                     </div>
                 </div>
             </div>
