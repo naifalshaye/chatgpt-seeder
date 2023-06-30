@@ -1,8 +1,8 @@
 ## ChatGPT Seeder
 
-A powerful tool that leverages the capabilities of ChatGPT to automate the generation of realistic and meaningful data for your database seeding need.
+#### A powerful tool that leverages the capabilities of ChatGPT to automate the generation of realistic and meaningful data for your database seeding need.
 
-## Features
+### Features
 - Easy data seeding
 - Real/fake data options
 - Flexible table selection
@@ -18,8 +18,9 @@ A powerful tool that leverages the capabilities of ChatGPT to automate the gener
 - Customizable configuration
 - Display API token usage
 - User-friendly interface
+- Try catch exception, both backend and frontend
 
-## Installation
+### Installation
 
 You can install the package into a Laravel app that uses Nova 4 via composer:
 
@@ -41,7 +42,7 @@ CHATGPT_SEEDER_MAX_TOKENS=1000
 CHATGPT_SEEDER_GENERATE_RETRY=3
 ```
 
-## Usage
+### Usage
 
 Add the tool to NovaServiceProvider.php
 
@@ -54,18 +55,17 @@ Add the tool to NovaServiceProvider.php
     }
 ```
 
-## Configuration
+### Configuration
 
 ChatGPT Seeder's configuration file, located at config/chatgpt-seeder.php\
 Allows you to set and customize:
 
 - ChatGPT API Key
-- Maximum tokens to be used for each request.
-- Retry Count
+- Maximum tokens to be used for each request (higher number yields longer data)
+- Retry count: Refers to the tool's ability to retry the data request when the returned data is not valid. It will continue retrying until it reaches the maximum retry count, ensuring a valid and accurate result while avoiding too many API requests.
 
-Retry Count is used for limit trying a request data that is return not valid it will retry again until reach the max retry. To rewrite the data requirement description to get more accurate result.
 
-## Steps
+### Steps
 
 1- Access ChatGPT Seeder Tool from the Laravel Nova dashboard.\
 2- Fill in the required information, such as:
@@ -73,13 +73,13 @@ Retry Count is used for limit trying a request data that is return not valid it 
 - Table Name
 - Number of Records
 - Data Required Description
-- Column Names List.
+- Select any nullable columns.
 
 3- Click the "Generate" button to initiate the data generation process.\
 4- Data Preview will show up displaying the first 8 records.\
-5- Click Proceed to insert data to table Or click on Regenerate again until you are satisfied with the result.
+5- Click Proceed to insert data to table, or click on Regenerate again until you are satisfied with the result.
 
-## Screenshots
+### Screenshots
 
 <img src="screenshots/home.png" width="800">
 <img src="screenshots/preview.png" width="800">

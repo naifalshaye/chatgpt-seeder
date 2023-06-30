@@ -159,7 +159,7 @@
             <div v-if="this.message" class="text-green-500 font-bold mt-4 flex justify-center capitalize">
                 {{ this.message }}
             </div>
-            <div v-if="this.error" class="text-red-500 font-bold mt-4 flex justify-center">
+            <div v-if="this.error" class="text-red-500 font-bold mt-4 flex justify-center text-center">
                 {{ this.error }}
             </div>
             <div
@@ -221,10 +221,7 @@
                     </table>
                 </div>
                 <div class="flex justify-center mb-4 mt-2">
-                    API Usage:<br>
-                    Completion Tokens: {{ this.usage.completion_tokens }}<br>
-                    Prompt Tokens: {{ this.usage.prompt_tokens }}<br>
-                    Total Tokens: {{ this.usage.total_tokens }}
+                    Total Tokens Used: {{ this.usage.total_tokens }}
                 </div>
                 <div class="flex justify-center mt-8">
                     <button class="px-4 py-2 bg-green-500 text-white rounded-md mr-2 rounded" @click="proceed">Proceed
@@ -273,22 +270,40 @@ export default {
     },
     methods: {
         getGenerateRetry() {
-            Nova.request().get('/nova-vendor/chatgpt-seeder/get-generate-retry', {}).then(({data}) => {
-                this.generate_retry = data.generate_retry;
-            })
+            try {
+                Nova.request().get('/nova-vendor/chatgpt-seeder/get-generate-retry', {}).then(({data}) => {
+                    this.generate_retry = data.generate_retry;
+                })
+            } catch (e) {
+                this.error = e.message;
+            }
         },
         getTables() {
-            Nova.request().get('/nova-vendor/chatgpt-seeder/tables', {}).then(({data}) => {
-                this.tables = data.tables;
-            })
+            try {
+                Nova.request().get('/nova-vendor/chatgpt-seeder/tables', {}).then(({data}) => {
+                    this.tables = data.tables;
+                })
+            } catch (e) {
+                this.error = e.message;
+            }
         },
         getColumns(table) {
-            this.columns = [];
-            this.form.selected_columns = [];
-            this.database_table = table.target.value;
-            Nova.request().get('/nova-vendor/chatgpt-seeder/columns/' + table.target.value, {}).then(({data}) => {
-                this.columns = data.columns
-            })
+            try {
+                this.clearError();
+                this.columns = [];
+                this.form.selected_columns = [];
+                this.database_table = table.target.value;
+                Nova.request().get('/nova-vendor/chatgpt-seeder/columns/' + table.target.value, {}).then(({data}) => {
+                    if (data.exception) {
+                        this.isLoading = false;
+                        this.error = data.exception_message;
+                    } else {
+                        this.columns = data.columns
+                    }
+                })
+            } catch (e) {
+                this.error = e.message;
+            }
         },
         submitForm() {
             this.clearError();
@@ -296,45 +311,70 @@ export default {
             this.generate();
         },
         generate() {
-
-            this.message = ''
-            this.isLoading = true;
-            if (this.retry_count <= this.generate_retry) {
-                this.form.columns = this.columns;
-                Nova.request().post('/nova-vendor/chatgpt-seeder/generate', this.form)
-                    .then(({data}) => {
-                        this.usage = data.usage;
-                        if (data.data) {
-                            this.content = data.data;
-                            data = data.data.slice(0, 8);
-                            if (data.length > 1) {
-                                this.sample_data = data;
-                                this.keys = Object.keys(data[0]);
+            try {
+                this.clearError();
+                this.message = ''
+                this.isLoading = true;
+                if (this.retry_count <= this.generate_retry) {
+                    this.form.columns = this.columns;
+                    Nova.request().post('/nova-vendor/chatgpt-seeder/generate', this.form)
+                        .then(({data}) => {
+                            if (data.api_response_error) {
                                 this.isLoading = false;
-                                this.openModal();
+                                this.error = 'There is something wrong with API response result.'
+                            } else if (data.exception) {
+                                this.isLoading = false;
+                                this.error = data.exception_message;
                             } else {
-                                this.retry_count++;
-                                this.generate();
+                                this.usage = data.usage;
+                                if (data.data) {
+                                    this.content = data.data;
+                                    data = data.data.slice(0, 8);
+                                    if (data.length > 1) {
+                                        this.sample_data = data;
+                                        this.keys = Object.keys(data[0]);
+                                        this.isLoading = false;
+                                        this.openModal();
+                                    } else {
+                                        this.retry_count++;
+                                        this.generate();
+                                    }
+                                } else {
+                                    this.retry_count++;
+                                    this.generate();
+                                }
                             }
-                        } else {
-                            this.retry_count++;
-                            this.generate();
-                        }
-                    })
-            } else {
-                this.isLoading = false;
-                this.error = 'Retry limit exceeded! Please refine your data description for more accurate results!'
+                        })
+                } else {
+                    this.isLoading = false;
+                    this.error = 'Retry limit exceeded! Please refine your data description for more accurate results!'
+                }
+            } catch (e) {
+                this.error = e.message;
             }
         },
         proceed() {
-            this.form.seed_data = this.content
-            Nova.request().post('/nova-vendor/chatgpt-seeder/proceed', this.form)
-                .then(({data}) => {
-                    if (data.succeed) {
-                        this.isLoading = false;
-                        this.message = this.form.database_table +' table seeded successfully!'
-                    }
-                })
+            try {
+                this.clearError();
+                this.form.seed_data = this.content
+                Nova.request().post('/nova-vendor/chatgpt-seeder/proceed', this.form)
+                    .then(({data}) => {
+                        if (data.exception) {
+                            this.isLoading = false;
+                            this.error = data.exception_message;
+                        } else {
+                            if (data.succeed) {
+                                this.isLoading = false;
+                                this.message = this.form.database_table + ' table seeded successfully!'
+                            } else{
+                                this.isLoading = false;
+                                this.message = 'Data return is invalid!'
+                            }
+                        }
+                    })
+            } catch (e) {
+                this.error = e.message;
+            }
         },
         reGenerate() {
             this.resetRetry();
