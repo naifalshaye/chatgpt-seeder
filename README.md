@@ -20,6 +20,11 @@
 - User-friendly interface
 - Try catch exception, both backend and frontend
 
+### Requirements
+- PHP 8.0 or higher
+- Nova 4
+- OpenAI API Key
+
 ### Installation
 
 You can install the package into a Laravel app that uses Nova 4 via composer:
