@@ -16,8 +16,8 @@ class ChatGPTSeederController extends Controller
         $tables_list = [];
         $tables = Schema::getAllTables();
 
-        foreach ($tables as $table){
-            $table = json_decode(json_encode($table),true);
+        foreach ($tables as $table) {
+            $table = json_decode(json_encode($table), true);
             $table = array_values($table);
             $tables_list[] = $table[0];
         }
@@ -54,7 +54,7 @@ class ChatGPTSeederController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'exception' => true,
-                'exception_message' => $e->getMessage(),
+                'exception_message' => 'Error 1001 | Line: ' . $e->getLine() . ' | ' . $e->getMessage()
             ]);
         }
     }
@@ -92,32 +92,31 @@ class ChatGPTSeederController extends Controller
             } catch (\Exception $e) {
                 return response()->json([
                     'exception' => true,
-                    'exception_message' => $e->getMessage(),
+                    'exception_message' => 'Error 1002 | Line: ' . $e->getLine() . ' | ' . $e->getMessage()
                 ]);
             }
 
-            if (isset($response->json()['choices'][0])) {
+
+            if (isset($response->json()['choices'][0]['text'])) {
                 $repsonse = explode('\n', $response->json()['choices'][0]['text']);
                 $usage = $response->json()['usage'];
                 $string = stripslashes(trim($repsonse[0]));
                 $modifiedString = preg_replace('/(?<!\\\\)\s+/', ' ', $string);
-                $modifiedString = '[' . $modifiedString . ']';
                 $array = json_decode($modifiedString, true);
-
                 return response()->json([
-                    'data' => $array[0],
+                    'data' => $array,
                     'usage' => $usage,
                 ]);
-            } else {
+            } else if (isset($response->json()['error'])) {
                 return response()->json([
-                    'api_response_error' => true,
+                    'api_response_error' => $response->json()['error']['message'],
                 ]);
             }
 
         } catch (\Exception $e) {
             return response()->json([
                 'exception' => true,
-                'exception_message' => $e->getMessage(),
+                'exception_message' => 'Error 1003 | Line: ' . $e->getLine() . ' | ' . $e->getMessage()
             ]);
         }
     }
@@ -129,7 +128,19 @@ class ChatGPTSeederController extends Controller
                 try {
                     DB::table($request->database_table)->truncate();
                     foreach ($request->seed_data as $item) {
-                        DB::table($request->database_table)->insert($item);
+                        foreach ($item as $key => $value) {
+                            if (isset($item[$key]) && is_array($item[$key])) {
+                                $item[$key] = implode(', ', $item[$key]);
+                            }
+                        }
+                        try {
+                            DB::table($request->database_table)->insertOrIgnore($item);
+                        } catch (\Exception $e) {
+                            return response()->json([
+                                'exception' => true,
+                                'exception_message' => 'Error 1004 | Line: ' . $e->getLine() . ' | ' . $e->getMessage()
+                            ]);
+                        }
                     }
                     return response()->json([
                         'succeed' => true
@@ -137,7 +148,7 @@ class ChatGPTSeederController extends Controller
                 } catch (\Exception $e) {
                     return response()->json([
                         'exception' => true,
-                        'exception_message' => $e->getMessage(),
+                        'exception_message' => 'Error 1005 | Line: ' . $e->getLine() . ' | ' . $e->getMessage()
                     ]);
                 }
             }
@@ -147,7 +158,7 @@ class ChatGPTSeederController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'exception' => true,
-                'exception_message' => $e->getMessage(),
+                'exception_message' => 'Error 1006 | Line: ' . $e->getLine() . ' | ' . $e->getMessage()
             ]);
         }
     }

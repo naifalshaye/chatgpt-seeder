@@ -150,7 +150,8 @@
                             </div>
                         </div>
 
-                        <div v-if="this.form.database_table !== '' && this.columns.length === 0" class="text-red-500 font-bold mt-4 flex justify-center text-center">
+                        <div v-if="this.form.database_table !== '' && this.columns.length === 0"
+                             class="text-red-500 font-bold mt-4 flex justify-center text-center">
                             This table has no columns.
                         </div>
                     </div>
@@ -196,8 +197,8 @@
                 </button>
             </div>
             <div class="px-6 py-4">
-                <div class="flex justify-center">
-                    <table class="table-auto min-w-[20rem]">
+                <div class="flex justify-center overflow-x max-h-[calc(100vh-5em)]">
+                    <table class="table-auto overflow-scroll min-w-[20rem]">
                         <thead>
                         <tr>
                             <th v-for="key in this.keys" :key="key"
@@ -325,7 +326,7 @@ export default {
                         .then(({data}) => {
                             if (data.api_response_error) {
                                 this.isLoading = false;
-                                this.error = 'There is something wrong with API response result.'
+                                this.error = data.api_response_error
                             } else if (data.exception) {
                                 this.isLoading = false;
                                 this.error = data.exception_message;
@@ -370,7 +371,7 @@ export default {
                             if (data.succeed) {
                                 this.isLoading = false;
                                 this.message = this.form.database_table + ' table seeded successfully!'
-                            } else{
+                            } else {
                                 this.isLoading = false;
                                 this.message = 'Data return is invalid!'
                             }
