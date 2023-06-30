@@ -91,7 +91,7 @@ https://naif.io
 
 Bug Tracker:
 
-https://github.com/naifalshaye/chatgpt-nova4/issues
+https://github.com/naifalshaye/chatgpt-seeder/issues
 
 ## License
 

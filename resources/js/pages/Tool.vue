@@ -271,7 +271,7 @@ export default {
     methods: {
         getGenerateRetry() {
             try {
-                Nova.request().get('/nova-vendor/chatgpt-seeder/get-generate-retry', {}).then(({data}) => {
+                Nova.request().get('/nova-vendor/chatgpt-seeder/chatgpt-seeder/get-generate-retry', {}).then(({data}) => {
                     this.generate_retry = data.generate_retry;
                 })
             } catch (e) {
@@ -280,7 +280,7 @@ export default {
         },
         getTables() {
             try {
-                Nova.request().get('/nova-vendor/chatgpt-seeder/tables', {}).then(({data}) => {
+                Nova.request().get('/nova-vendor/chatgpt-seeder/chatgpt-seeder/tables', {}).then(({data}) => {
                     this.tables = data.tables;
                 })
             } catch (e) {
@@ -293,7 +293,7 @@ export default {
                 this.columns = [];
                 this.form.selected_columns = [];
                 this.database_table = table.target.value;
-                Nova.request().get('/nova-vendor/chatgpt-seeder/columns/' + table.target.value, {}).then(({data}) => {
+                Nova.request().get('/nova-vendor/chatgpt-seeder/chatgpt-seeder/columns/' + table.target.value, {}).then(({data}) => {
                     if (data.exception) {
                         this.isLoading = false;
                         this.error = data.exception_message;
@@ -317,7 +317,7 @@ export default {
                 this.isLoading = true;
                 if (this.retry_count <= this.generate_retry) {
                     this.form.columns = this.columns;
-                    Nova.request().post('/nova-vendor/chatgpt-seeder/generate', this.form)
+                    Nova.request().post('/nova-vendor/chatgpt-seeder/chatgpt-seeder/generate', this.form)
                         .then(({data}) => {
                             if (data.api_response_error) {
                                 this.isLoading = false;
@@ -357,7 +357,7 @@ export default {
             try {
                 this.clearError();
                 this.form.seed_data = this.content
-                Nova.request().post('/nova-vendor/chatgpt-seeder/proceed', this.form)
+                Nova.request().post('/nova-vendor/chatgpt-seeder/chatgpt-seeder/proceed', this.form)
                     .then(({data}) => {
                         if (data.exception) {
                             this.isLoading = false;
